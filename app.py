@@ -15,13 +15,13 @@ import logging
 
 
 # Load model files
-with open("lda_model.pkl", "rb") as f:
+with open("data/lda_model.pkl", "rb") as f:
     lda = pickle.load(f)
 
-with open("label_encoder.pkl", "rb") as f:
+with open("data/label_encoder.pkl", "rb") as f:
     label_encoder = pickle.load(f)
 
-with open("vectorizer.pkl", "rb") as f:
+with open("data/vectorizer.pkl", "rb") as f:
     vectorizer = pickle.load(f)
 
 # Load NLP word model
