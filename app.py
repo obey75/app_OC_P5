@@ -68,7 +68,7 @@ def get_prediction(input_data: PredictionInput):
 
         # Prepare the response
         res = [
-            (label_encoder.inverse_transform([lda.classes_[idx]])[0], prob)
+            ([lda.classes_[idx]][0], prob)
             for idx, prob in enumerate(pred_proba) if prob > 0.5
         ]
 
