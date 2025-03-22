@@ -1,0 +1,70 @@
+name: Build and Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Étape 2 : Configure Python
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      # Étape 3 : Install dependencies and run test
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 pytest
+
+      - name: Run flake8 (Code Lint)
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Set up PYTHONPATH
+        run: echo "PYTHONPATH=." >> $GITHUB_ENV
+
+      - name: Run tests with pytest
+        run: pytest
+
+      # Étape 4 : Install Heroku CLI
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Authenticate with Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo "machine api.heroku.com" > ~/.netrc
+          echo "  login $HEROKU_API_KEY" >> ~/.netrc
+          echo "  password $HEROKU_API_KEY" >> ~/.netrc
+          echo "machine git.heroku.com" >> ~/.netrc
+          echo "  login $HEROKU_API_KEY" >> ~/.netrc
+          echo "  password $HEROKU_API_KEY" >> ~/.netrc
+          chmod 600 ~/.netrc
+
+      # Étape 6 : Configure remote Heroku
+      - name: Add Heroku remote
+        run: git remote add heroku https://git.heroku.com/app-oc-stackoverflow.git
+
+      # Étape 7 : Make sure it is not empty
+      - name: Fetch all history for all branches
+        run: git fetch --unshallow || true
+
+      # Étape 8 : Push to Heroku
+      - name: Force push to Heroku
+        run: git push --force heroku main
