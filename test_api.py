@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 
-HEROKU_API_URL = "https://appstackoverflow-306ae9ef3bd6.herokuapp.com/prediction"
+HEROKU_API_URL = "https://app-oc-stackoverflow-6669189936dc.herokuapp.com/prediction"
 
 st.title("Test de l'application de sugggestion de tags")
 st.write("Cette interface permet d'envoyer des requêtes à l'application déjà déployée sur Heroku.")
